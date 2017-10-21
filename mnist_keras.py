@@ -9,11 +9,11 @@ import os
 from keras.callbacks import EarlyStopping
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.optimizers import Adam
+import keras.backend.tensorflow_backend as KTF
 
 ################################学習の開始##################################
 def CNN(input_shape):
     model = Sequential()
-    #lrelu = keras.layers.advanced_activations.LeakyReLU()
     model.add(Conv2D(32, kernel_size=(5, 5), \
                         activation='relu', input_shape=input_shape))
     model.add(Conv2D(64, (5, 5), activation='relu'))
@@ -56,12 +56,7 @@ if __name__=="__main__":
     batch_size = 128
     num_classes = 10
     epochs = 100
-    
     img_rows, img_cols = 28, 28
-
-    MODEL_DIR = os.path.join(os.path.dirname(__file__), 'model')
-    if os.path.exists(MODEL_DIR) is False:
-        os.mkdir(MODEL_DIR)
 
     # the data, shuffled and split between train and test sets
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -89,7 +84,6 @@ if __name__=="__main__":
     y_test = keras.utils.to_categorical(y_test, num_classes)
 
     model = CNN(input_shape)
-
     early = EarlyStopping()
 
     model.compile(loss=keras.losses.categorical_crossentropy,
@@ -97,10 +91,11 @@ if __name__=="__main__":
 
     history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test), callbacks=[early])
 
-    #history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test))
-
-    model.save(MODEL_DIR + '/model.hdf5')
-
     plot_history(history)
+#    loss, acc = model.evaliate(x_test, y_test, verbose=0)
 
-    loss, acc = model.evaliate(x_test, y_test, verbose=0)
+    print('save the architecture of a CNN model')
+    json_string = model.to_json()
+    open('cnn_model.json', 'w').write(json_string)
+    print('save weight datasets!!')
+    model.save_weights('cnn_model_weights.h5')
