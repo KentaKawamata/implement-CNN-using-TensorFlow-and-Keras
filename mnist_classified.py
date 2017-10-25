@@ -12,58 +12,12 @@ from keras.optimizers import Adam
 import keras.backend.tensorflow_backend as KTF
 from keras.models import model_from_json
 
-################################学習の開始##################################
-def CNN(input_shape):
-    #model = Sequential()
-    model.add(Conv2D(32, kernel_size=(5, 5), \
-                        activation='relu', input_shape=input_shape))
-    model.add(Conv2D(64, (5, 5), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(num_classes, activation='softmax'))
-    
-    early = EarlyStopping(monitor='val_loss', min_delta=0, patience=0, verbose=0, mode='auto')
-
-    return model
-
-def plot_history(history):
-
-    score = model.evaluate(x_test, y_test, verbose=0)
-    print('Test loss:', score[0])
-    print('Test accuracy:', score[1])
-
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-    #loss
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-
 if __name__=="__main__":
     
     batch_size = 128
     num_classes = 10
     epochs = 1
     img_rows, img_cols = 28, 28
-
-    #print("read weight files")
-    #json_string = open('cnn_model.json', 'r').read()
-    #model = model_from_json(json_string)
-    #model.load_weights('cnn_model_weights.h5')
-    #print("successed reading weights")
 
     # the data, shuffled and split between train and test sets
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -93,21 +47,14 @@ if __name__=="__main__":
     print("read weight files")
     json_string = open('cnn_model.json', 'r').read()
     model = model_from_json(json_string)
-    #model.load_weights('cnn_model_weights.h5')
     print("success")
 
-    #model = CNN(input_shape)
-    #early = EarlyStopping()
-    
     model.summary()
     model.compile(loss=keras.losses.categorical_crossentropy,
               optimizer='adam', metrics=['accuracy'])
     
     model.load_weights('cnn_model_weights.h5')
 
-    #history = model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test), callbacks=[early])
-
-    #plot_history(history)
     score = model.evaluate(x_test, y_test, verbose=0)
     print('Test loss :', score[0])
     print('Test accuracy :', score[1])
