@@ -4,7 +4,7 @@ from keras.datasets import mnist
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras import backend as K
-import matplotlib.pyplot as plt
+import numpy as np
 import os
 from keras.callbacks import EarlyStopping
 from keras.layers import Dense, Dropout, Activation, Flatten
